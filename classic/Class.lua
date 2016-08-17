@@ -461,6 +461,16 @@ function Class:include(klass)
     finalMethods[name] = true
   end
 
+  local staticmethods = rawget(self, 'static')
+  local staticotherMethods = rawget(klass, 'static')
+  for name, func in pairs(staticotherMethods) do
+    if staticmethods[name] ~= nil then
+      error("method conflict: trying to include " .. name .. "() from "
+            .. klass:name() .. ", but a static method of that name already exists.", 2)
+    end
+    staticmethods[name] = func
+  end
+
 end
 
 --[[ Checks whether the class is abstract.
